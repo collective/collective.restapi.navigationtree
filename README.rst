@@ -29,8 +29,15 @@ Features
 Examples
 --------
 
-This add-on can be seen in action at the following sites:
-- Is there a page on the internet where everybody can see the features?
+Getting the navigation tree::
+
+    GET /plone/@navigationtree HTTP/1.1
+    Accept: application/json
+    Authorization: Basic YWRtaW46c2VjcmV0
+
+Authorization is optional.
+
+Example response::
 
     {
         "@id": "http://localhost:8080/Plone/@navigationtree",
