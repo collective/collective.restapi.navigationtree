@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone import api
 from plone.app.layout.navigation.interfaces import INavtreeStrategy
 from plone.app.layout.navigation.navtree import buildFolderTree
 from plone.app.layout.navigation.root import getNavigationRoot
@@ -29,7 +30,11 @@ class NavigationTree(object):
         navroot_path = getNavigationRoot(context)
         if portal_path != navroot_path:
             self.portal = self.portal.restrictedTraverse(navroot_path)
-        self.data = Assignment(root=navroot_path)
+        if api.env.plone_version() < '5':
+            self.data = Assignment(root=navroot_path)
+        else:
+            uuid = api.content.get_uuid(obj=self.portal['front-page'])
+            self.data = Assignment(root_uid=uuid)
 
     def __call__(self, expand=False):
         result = {
