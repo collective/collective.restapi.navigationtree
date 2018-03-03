@@ -6,6 +6,7 @@ from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.portlets.portlets.navigation import Assignment
 from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.services import Service
+from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.utils import getToolByName
 from webcouturier.dropdownmenu.browser.dropdown import DropdownQueryBuilder
 from zope.component import adapter
@@ -33,8 +34,16 @@ class NavigationTree(object):
         if api.env.plone_version() < '5':
             self.data = Assignment(root=navroot_path)
         else:
-            uuid = api.content.get_uuid(obj=self.portal['front-page'])
-            self.data = Assignment(root_uid=uuid)
+            try:
+                if IContentish.providedBy(self.portal):
+                    uid = api.content.get_uuid(obj=self.portal)
+                else:
+                    uid = None
+            except TypeError:
+                # ArcheTypes (such as PFG FormFolder) have no UID yet when the
+                # factory gets called.
+                uid = None
+            self.data = Assignment(root_uid=uid)
 
     def __call__(self, expand=False):
         result = {
