@@ -34,16 +34,7 @@ class NavigationTree(object):
         if api.env.plone_version() < '5':
             self.data = Assignment(root=navroot_path)
         else:
-            try:
-                if IContentish.providedBy(self.portal):
-                    uid = api.content.get_uuid(obj=self.portal)
-                else:
-                    uid = None
-            except TypeError:
-                # ArcheTypes (such as PFG FormFolder) have no UID yet when the
-                # factory gets called.
-                uid = None
-            self.data = Assignment(root_uid=uid)
+            self.data = Assignment(root_uid=None)
 
     def __call__(self, expand=False):
         result = {
