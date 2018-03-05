@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
+from collective.restapi.navigationtree.testing import CRN_DX_INTEGRATION_TESTING  # noqa
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
-from collective.restapi.navigationtree.testing import COLLECTIVE_RESTAPI_NAVIGATIONTREE_INTEGRATION_TESTING  # noqa
 
 import unittest
 
@@ -11,7 +11,7 @@ import unittest
 class TestSetup(unittest.TestCase):
     """Test that collective.restapi.navigationtree is properly installed."""
 
-    layer = COLLECTIVE_RESTAPI_NAVIGATIONTREE_INTEGRATION_TESTING
+    layer = CRN_DX_INTEGRATION_TESTING
 
     def setUp(self):
         """Custom shared utility setup for tests."""
@@ -35,7 +35,7 @@ class TestSetup(unittest.TestCase):
 
 class TestUninstall(unittest.TestCase):
 
-    layer = COLLECTIVE_RESTAPI_NAVIGATIONTREE_INTEGRATION_TESTING
+    layer = CRN_DX_INTEGRATION_TESTING
 
     def setUp(self):
         self.portal = self.layer['portal']

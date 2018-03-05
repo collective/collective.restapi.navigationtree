@@ -48,7 +48,10 @@ setup(
     ],
     extras_require={
         'test': [
+            'plone.app.contenttypes',
+            'plone.restapi[test]',
             'plone.app.testing',
+            'plone.app.robotframework[debug]',
             'plone.testing',
         ],
     },
