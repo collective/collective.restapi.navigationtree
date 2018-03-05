@@ -48,12 +48,11 @@ setup(
     ],
     extras_require={
         'test': [
+            'plone.app.contenttypes',
+            'plone.restapi[test]',
             'plone.app.testing',
-            # Plone KGS does not use this version, because it would break
-            # Remove if your package shall be part of coredev.
-            # plone_coredev tests as of 2016-04-01.
-            'plone.testing>=5.0.0',
             'plone.app.robotframework[debug]',
+            'plone.testing',
         ],
     },
     entry_points="""

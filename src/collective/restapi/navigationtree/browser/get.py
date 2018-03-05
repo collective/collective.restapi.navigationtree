@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from plone import api
 from plone.app.layout.navigation.interfaces import INavtreeStrategy
 from plone.app.layout.navigation.navtree import buildFolderTree
 from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.portlets.portlets.navigation import Assignment
 from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.services import Service
+from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.utils import getToolByName
 from webcouturier.dropdownmenu.browser.dropdown import DropdownQueryBuilder
 from zope.component import adapter
@@ -29,7 +31,10 @@ class NavigationTree(object):
         navroot_path = getNavigationRoot(context)
         if portal_path != navroot_path:
             self.portal = self.portal.restrictedTraverse(navroot_path)
-        self.data = Assignment(root=navroot_path)
+        if api.env.plone_version() < '5':
+            self.data = Assignment(root=navroot_path)
+        else:
+            self.data = Assignment(root_uid=None)
 
     def __call__(self, expand=False):
         result = {

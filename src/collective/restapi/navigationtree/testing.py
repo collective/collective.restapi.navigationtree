@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
+from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
@@ -10,7 +10,39 @@ from plone.testing import z2
 import collective.restapi.navigationtree
 
 
-class CollectiveRestapiNavigationtreeLayer(PloneSandboxLayer):
+class CollectiveRestapiNavigationtreeDXLayer(PloneSandboxLayer):
+
+    defaultBases = (PLONE_APP_CONTENTTYPES_FIXTURE,)
+
+    def setUpZope(self, app, configurationContext):
+        # Load any other ZCML that is required for your tests.
+        # The z3c.autoinclude feature is disabled in the Plone fixture base
+        # layer.
+        import plone.restapi
+        self.loadZCML(package=plone.restapi)
+        self.loadZCML(package=collective.restapi.navigationtree)
+        z2.installProduct(app, 'collective.restapi.navigationtree')
+
+    def setUpPloneSite(self, portal):
+        applyProfile(portal, 'collective.restapi.navigationtree:default')
+
+
+CRN_DX_FIXTURE = CollectiveRestapiNavigationtreeDXLayer()
+
+
+CRN_DX_INTEGRATION_TESTING = IntegrationTesting(
+    bases=(CRN_DX_FIXTURE,),
+    name='CollectiveRestapiNavigationtreeDXLayer:IntegrationTesting'
+)
+
+
+CRN_DX_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(CRN_DX_FIXTURE, z2.ZSERVER_FIXTURE),
+    name='CollectiveRestapiNavigationtreeDXLayer:FunctionalTesting'
+)
+
+
+class CollectiveRestapiNavigationtreeATLayer(PloneSandboxLayer):
 
     defaultBases = (PLONE_FIXTURE,)
 
@@ -18,34 +50,25 @@ class CollectiveRestapiNavigationtreeLayer(PloneSandboxLayer):
         # Load any other ZCML that is required for your tests.
         # The z3c.autoinclude feature is disabled in the Plone fixture base
         # layer.
-        import plone.app.dexterity
-        self.loadZCML(package=plone.app.dexterity)
+        import plone.restapi
+        self.loadZCML(package=plone.restapi)
         self.loadZCML(package=collective.restapi.navigationtree)
+        z2.installProduct(app, 'collective.restapi.navigationtree')
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'collective.restapi.navigationtree:default')
 
 
-COLLECTIVE_RESTAPI_NAVIGATIONTREE_FIXTURE = CollectiveRestapiNavigationtreeLayer()
+CRN_AT_FIXTURE = CollectiveRestapiNavigationtreeATLayer()
 
 
-COLLECTIVE_RESTAPI_NAVIGATIONTREE_INTEGRATION_TESTING = IntegrationTesting(
-    bases=(COLLECTIVE_RESTAPI_NAVIGATIONTREE_FIXTURE,),
-    name='CollectiveRestapiNavigationtreeLayer:IntegrationTesting'
+CRN_AT_INTEGRATION_TESTING = IntegrationTesting(
+    bases=(CRN_AT_FIXTURE,),
+    name='CollectiveRestapiNavigationtreeATLayer:IntegrationTesting'
 )
 
 
-COLLECTIVE_RESTAPI_NAVIGATIONTREE_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(COLLECTIVE_RESTAPI_NAVIGATIONTREE_FIXTURE,),
-    name='CollectiveRestapiNavigationtreeLayer:FunctionalTesting'
-)
-
-
-COLLECTIVE_RESTAPI_NAVIGATIONTREE_ACCEPTANCE_TESTING = FunctionalTesting(
-    bases=(
-        COLLECTIVE_RESTAPI_NAVIGATIONTREE_FIXTURE,
-        REMOTE_LIBRARY_BUNDLE_FIXTURE,
-        z2.ZSERVER_FIXTURE
-    ),
-    name='CollectiveRestapiNavigationtreeLayer:AcceptanceTesting'
+CRN_AT_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(CRN_AT_FIXTURE, z2.ZSERVER_FIXTURE),
+    name='CollectiveRestapiNavigationtreeATLayer:FunctionalTesting'
 )
