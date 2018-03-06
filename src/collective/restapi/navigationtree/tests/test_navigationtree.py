@@ -36,23 +36,104 @@ class TestServicesNavigation(unittest.TestCase):
         transaction.commit()
 
     def test_navigation(self):
-        response = self.api_session.get('/folder/@navigation')
+        response = self.api_session.get('/folder/@navigationtree')
 
         self.assertEqual(response.status_code, 200)
+        self.maxDiff = None
         self.assertEqual(
             response.json(),
             {
-                '@id': 'http://localhost:55001/plone/folder/@navigation',
-                'items': [
+                u'@id': u'http://localhost:55001/plone/folder/@navigationtree',
+                u'items': [
                     {
                         u'title': u'Home',
-                        u'@id': u'http://localhost:55001/plone'
+                        u'description': u'',
+                        u'items': u'',
+                        u'@id': u'http://localhost:55001/plone',
+                    },
+                    {
+                        u'title': u'folder-0',
+                        u'description': u'',
+                        u'items': [],
+                        u'@id': u'http://localhost:55001/plone/folder-0',
+                    },
+                    {
+                        u'title': u'folder-1',
+                        u'description': u'',
+                        u'items': [],
+                        u'@id': u'http://localhost:55001/plone/folder-1',
                     },
                     {
                         u'title': u'Some Folder',
-                        u'@id': u'http://localhost:55001/plone/folder'
-                    }
+                        u'description': u'',
+                        u'@id': u'http://localhost:55001/plone/folder',
+                        u'items': [
+                            {
+                                u'title': u'A document',
+                                u'description': u'',
+                                u'@id': u'http://localhost:55001/plone/folder/doc1',
+                            },
+                        ]
+                    },
                 ]
             }
         )
+
+
+class TestDropdownmenu(unittest.TestCase):
+
+    layer = CRN_DX_FUNCTIONAL_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        request = self.layer['request']
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+
+        # we have 2 folders created on the layer right away
+        self.root_folders_ids = ['folder-0', 'folder-1']
+
+        setRoles(self.portal, TEST_USER_ID, ['Member'])
+
+    def addSubFolders(self):
+        # add some subfolders to one of the folders
+        rf = getattr(self.portal, 'folder-0')
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        for i in range(2):
+            rf.invokeFactory('Folder', 'sub-%s' % i)  # noqa: P001
+        setRoles(self.portal, TEST_USER_ID, ['Member'])
+
+        return rf.absolute_url()
+
+#    def test_no_subfolders_without_content(self):
+#        # since we don't have subfolders yet, we should not have dropdowns
+#        for tab_url in [getattr(self.portal, folder_id).absolute_url()
+#                        for folder_id in self.root_folders_ids]:
+#            self.assertEqual(self.viewlet.getTabObject(tab_url), '')
+#
+#    def test_dropdownmenus_available(self):
+#        rf_url = self.addSubFolders()
+#        self.assertNotEqual(
+#            self.viewlet.getTabObject(rf_url),
+#            '',
+#            'We don\'t have the sub-folders available in the global navigation'
+#        )
+#
+#    def test_subfolders_in_dropdownmenus(self):
+#        rf_url = self.addSubFolders()
+#        self.viewlet.update()
+#        self.assertIn(
+#            'href="http://nohost/plone/folder-0/sub-0"',
+#            self.viewlet.getTabObject(rf_url),
+#            'The sub-folder\'s URL is not available in the global navigation'
+#        )
+#
+#    def test_leaks_in_dropdownmenus(self):
+#        rf_url = self.addSubFolders()
+#        self.viewlet.update()
+#        self.assertNotIn(
+#            'href="http://nohost/plone/folder-0"',
+#            self.viewlet.getTabObject(rf_url),
+#            'We have the leakage of the top level folders in the dropdownmenus'
+#        )
+
 

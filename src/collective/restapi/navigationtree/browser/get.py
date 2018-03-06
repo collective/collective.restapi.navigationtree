@@ -6,7 +6,6 @@ from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.portlets.portlets.navigation import Assignment
 from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.services import Service
-from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.utils import getToolByName
 from webcouturier.dropdownmenu.browser.dropdown import DropdownQueryBuilder
 from zope.component import adapter

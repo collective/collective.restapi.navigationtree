@@ -24,5 +24,6 @@
     factory=".get.NavigationTreeGet"
     name="@navigationtree"
     permission="zope2.View"
+    layer="collective.restapi.navigationtree.interfaces.ICollectiveRestapiNavigationtreeLayer"
     />
 </configure>
