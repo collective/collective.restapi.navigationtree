@@ -18,6 +18,7 @@ install:
   - virtualenv -p `which python` .
   - bin/pip install -r requirements.txt
   - sed -ie "s#4.3-latest#$PLONE_VERSION-latest#" buildout.cfg
+  - sed -ie "s#versions-4.3#versions-$PLONE_VERSION#" buildout.cfg
   - bin/buildout -N buildout:download-cache=downloads code-analysis:return-status-codes=True annotate
   - bin/buildout -N buildout:download-cache=downloads code-analysis:return-status-codes=True
 before_script:
