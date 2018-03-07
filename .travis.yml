@@ -7,11 +7,17 @@ cache:
   - downloads
 python:
   - "2.7"
+env:
+  matrix:
+    - PLONE_VERSION=4.3
+    - PLONE_VERSION=5.0
+    - PLONE_VERSION=5.1
 matrix:
   fast_finish: true
 install:
   - virtualenv -p `which python` .
   - bin/pip install -r requirements.txt
+  - sed -ie "s#4.3-latest#$PLONE_VERSION-latest#" buildout.cfg
   - bin/buildout -N buildout:download-cache=downloads code-analysis:return-status-codes=True annotate
   - bin/buildout -N buildout:download-cache=downloads code-analysis:return-status-codes=True
 before_script:
@@ -21,8 +27,9 @@ before_script:
 script:
   - bin/code-analysis
   - bin/test
+  - bin/pylint --py3k --disable=no-absolute-import src/collective/cover || true
 after_success:
-  - bin/createcoverage
+  - bin/createcoverage --output-dir=htmlcov -t "--layer=!Robot"
   - bin/pip install coverage
   - bin/python -m coverage.pickle2json
   - pip install coveralls
