@@ -37,7 +37,7 @@ class CollectiveRestapiNavigationtreeDXLayer(PloneSandboxLayer):
         workflowTool = getToolByName(portal, 'portal_workflow')   # noqa: P001
         workflowTool.setDefaultChain('simple_publication_workflow')
         for i in range(2):
-            folder_id = 'folder-%s' % i
+            folder_id = 'folder-{0}'.format(i)
             portal.invokeFactory('Folder', folder_id)  # noqa: P001
         setRoles(portal, TEST_USER_ID, ['Member'])
 
@@ -47,13 +47,13 @@ CRN_DX_FIXTURE = CollectiveRestapiNavigationtreeDXLayer()
 
 CRN_DX_INTEGRATION_TESTING = IntegrationTesting(
     bases=(CRN_DX_FIXTURE,),
-    name='CollectiveRestapiNavigationtreeDXLayer:IntegrationTesting'
+    name='CollectiveRestapiNavigationtreeDXLayer:IntegrationTesting',
 )
 
 
 CRN_DX_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(CRN_DX_FIXTURE, z2.ZSERVER_FIXTURE),
-    name='CollectiveRestapiNavigationtreeDXLayer:FunctionalTesting'
+    name='CollectiveRestapiNavigationtreeDXLayer:FunctionalTesting',
 )
 
 
@@ -79,11 +79,11 @@ CRN_AT_FIXTURE = CollectiveRestapiNavigationtreeATLayer()
 
 CRN_AT_INTEGRATION_TESTING = IntegrationTesting(
     bases=(CRN_AT_FIXTURE,),
-    name='CollectiveRestapiNavigationtreeATLayer:IntegrationTesting'
+    name='CollectiveRestapiNavigationtreeATLayer:IntegrationTesting',
 )
 
 
 CRN_AT_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(CRN_AT_FIXTURE, z2.ZSERVER_FIXTURE),
-    name='CollectiveRestapiNavigationtreeATLayer:FunctionalTesting'
+    name='CollectiveRestapiNavigationtreeATLayer:FunctionalTesting',
 )

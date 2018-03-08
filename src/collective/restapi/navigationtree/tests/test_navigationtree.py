@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from collective.restapi.navigationtree.testing import CRN_DX_FUNCTIONAL_TESTING  # noqa
+from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID
-from plone.dexterity.utils import createContentInContainer
 from plone.restapi.testing import RelativeSession
 
 import transaction
@@ -14,7 +14,7 @@ import unittest
 class TestServicesNavigation(unittest.TestCase):
 
     layer = CRN_DX_FUNCTIONAL_TESTING
-    
+
     def setUp(self):
         self.app = self.layer['app']
         self.portal = self.layer['portal']
@@ -25,12 +25,12 @@ class TestServicesNavigation(unittest.TestCase):
         self.api_session.headers.update({'Accept': 'application/json'})
         self.api_session.auth = (SITE_OWNER_NAME, SITE_OWNER_PASSWORD)
 
-        self.folder = createContentInContainer(
-            self.portal, u'Folder',
+        self.folder = api.content.create(
+            container=self.portal, type=u'Folder',
             id=u'folder',
             title=u'Some Folder')
-        createContentInContainer(
-            self.folder, u'Document',
+        api.content.create(
+            container=self.folder, type=u'Document',
             id=u'doc1',
             title=u'A document')
         transaction.commit()
@@ -71,12 +71,13 @@ class TestServicesNavigation(unittest.TestCase):
                             {
                                 u'title': u'A document',
                                 u'description': u'',
-                                u'@id': u'http://localhost:55001/plone/folder/doc1',
+                                u'@id':
+                                  u'http://localhost:55001/plone/folder/doc1',
                             },
-                        ]
+                        ],
                     },
-                ]
-            }
+                ],
+            },
         )
 
 
@@ -86,7 +87,6 @@ class TestDropdownmenu(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer['portal']
-        request = self.layer['request']
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
         # we have 2 folders created on the layer right away
@@ -99,7 +99,12 @@ class TestDropdownmenu(unittest.TestCase):
         rf = getattr(self.portal, 'folder-0')
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         for i in range(2):
-            rf.invokeFactory('Folder', 'sub-%s' % i)  # noqa: P001
+            api.content.create(
+                type=u'Folder',
+                title=u'Folder',
+                id='sub-%s' % 1,  # noqa: S001
+                container=rf,
+            )
         setRoles(self.portal, TEST_USER_ID, ['Member'])
 
         return rf.absolute_url()
@@ -115,7 +120,7 @@ class TestDropdownmenu(unittest.TestCase):
 #        self.assertNotEqual(
 #            self.viewlet.getTabObject(rf_url),
 #            '',
-#            'We don\'t have the sub-folders available in the global navigation'
+#            'We don\'t have the sub-folders available in the global navigation'  # noqa
 #        )
 #
 #    def test_subfolders_in_dropdownmenus(self):
@@ -133,7 +138,5 @@ class TestDropdownmenu(unittest.TestCase):
 #        self.assertNotIn(
 #            'href="http://nohost/plone/folder-0"',
 #            self.viewlet.getTabObject(rf_url),
-#            'We have the leakage of the top level folders in the dropdownmenus'
+#            'We have the leakage of the top level folders in the dropdownmenus'  # noqa
 #        )
-
-
