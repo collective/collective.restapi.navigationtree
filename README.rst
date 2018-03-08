@@ -6,6 +6,10 @@
 collective.restapi.navigationtree
 =================================
 
+.. image:: https://img.shields.io/travis/collective/collective.restapi.navigationtree/master.svg
+       :target: http://travis-ci.org/collective/collective.restapi.navigationtree
+
+
 This Plone plugin provides a REST endpoint to query the site's navigation tree.
 The endpoint name is `@navigationtree`,
 and can be considered an extension to `plone.restapi`'s `@navigation` endpoint, 
