@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from collective.restapi.navigationtree.testing import CRN_DX_FUNCTIONAL_TESTING  # noqa
+from collective.restapi.navigationtree.testing import CRN_AT_FUNCTIONAL_TESTING
+from collective.restapi.navigationtree.testing import CRN_DX_FUNCTIONAL_TESTING
 from plone import api
 from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
@@ -11,9 +12,7 @@ import transaction
 import unittest
 
 
-class TestServicesNavigation(unittest.TestCase):
-
-    layer = CRN_DX_FUNCTIONAL_TESTING
+class NavigationBase(object):
 
     def setUp(self):
         self.app = self.layer['app']
@@ -79,6 +78,16 @@ class TestServicesNavigation(unittest.TestCase):
                 ],
             },
         )
+
+
+class TestDXServicesNavigation(NavigationBase, unittest.TestCase):
+
+    layer = CRN_DX_FUNCTIONAL_TESTING
+
+
+class TestATServicesNavigation(NavigationBase, unittest.TestCase):
+
+    layer = CRN_AT_FUNCTIONAL_TESTING
 
 
 class TestDropdownmenu(unittest.TestCase):
