@@ -6,13 +6,11 @@ from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.portlets.portlets.navigation import Assignment
 from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.services import Service
-from Products.CMFCore.interfaces import IContentish
-from Products.CMFCore.utils import getToolByName
 from webcouturier.dropdownmenu.browser.dropdown import DropdownQueryBuilder
 from zope.component import adapter
 from zope.component import getMultiAdapter
-from zope.interface import Interface
 from zope.interface import implementer
+from zope.interface import Interface
 
 
 @implementer(IExpandableElement)
@@ -22,9 +20,9 @@ class NavigationTree(object):
     def __init__(self, context, request):
         self.context = context
         self.request = request
-        portal_props = getToolByName(context, 'portal_properties')
+        portal_props = api.portal.get_tool(name=u'portal_properties')
         self.properties = portal_props.navtree_properties
-        self.portal_state = getMultiAdapter((context, request), 
+        self.portal_state = getMultiAdapter((context, request),
                                             name=u'plone_portal_state')
         self.portal = self.portal_state.portal()
         portal_path = '/'.join(self.portal.getPhysicalPath())
@@ -37,20 +35,21 @@ class NavigationTree(object):
             self.data = Assignment(root_uid=None)
 
     def __call__(self, expand=False):
+        context = self.context
         result = {
             'navigationtree': {
-                '@id': '{}/@navigationtree'.format(self.context.absolute_url()),
+                '@id': '{0}/@navigationtree'.format(context.absolute_url()),
             },
         }
         if not expand:
             return result
 
-        tabs = getMultiAdapter((self.context, self.request),
-                               name="portal_tabs_view")
+        tabs = getMultiAdapter((context, self.request),
+                               name='portal_tabs_view')
         items = []
         for tab in tabs.topLevelTabs():
-            subitems = self.getTabObject(tabUrl = tab['url'],
-                                         tabPath = tab.get('path'))
+            subitems = self.getTabObject(tabUrl=tab['url'],
+                                         tabPath=tab.get('path'))
             items.append({
                 'title': tab.get('title', tab.get('name')),
                 '@id': tab['url'] + '',
@@ -68,7 +67,7 @@ class NavigationTree(object):
             if tabPath == '' or '/view' in tabPath:
                 return ''
 
-            if tabPath.startswith("/"):
+            if tabPath.startswith('/'):
                 tabPath = tabPath[1:]
             elif tabPath.endswith('/'):
                 # we need a real path, without a slash that might appear
@@ -83,11 +82,11 @@ class NavigationTree(object):
         tabObj = self.portal.restrictedTraverse(tabPath, None)
         if tabObj is None:
             return ''
-        strategy = getMultiAdapter((tabObj, self.data), 
+        strategy = getMultiAdapter((tabObj, self.data),
                                    INavtreeStrategy)
         queryBuilder = DropdownQueryBuilder(tabObj)
         query = queryBuilder()
-        data = buildFolderTree(tabObj, obj=tabObj, query=query, 
+        data = buildFolderTree(tabObj, obj=tabObj, query=query,
                                strategy=strategy)
         bottomLevel = self.data.bottomLevel or self.properties.getProperty(
             'bottomLevel', 0)
@@ -95,12 +94,12 @@ class NavigationTree(object):
         return self.recurse(children=data.get('children', []), level=1,
                             bottomLevel=bottomLevel)
 
-    def recurse(self, children = None, level = 0, bottomLevel = 0):
+    def recurse(self, children=None, level=0, bottomLevel=0):
         li = []
         for node in children:
             item = {'title': node['Title'], 'description': node['Description']}
             item['@id'] = node['getURL']
-            if bottomLevel <=0 or level <= bottomLevel:
+            if bottomLevel <= 0 or level <= bottomLevel:
                 nc = node['children']
                 nc = self.recurse(nc, level+1, bottomLevel)
                 if nc:
@@ -108,10 +107,9 @@ class NavigationTree(object):
             li.append(item)
         return li
 
-        
+
 class NavigationTreeGet(Service):
 
     def reply(self):
         navigationtree = NavigationTree(self.context, self.request)
         return navigationtree(expand=True)['navigationtree']
-
