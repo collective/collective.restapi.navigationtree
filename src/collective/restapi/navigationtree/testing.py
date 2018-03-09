@@ -67,17 +67,21 @@ class CollectiveRestapiNavigationtreeATLayer(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
-        # Load any other ZCML that is required for your tests.
-        # The z3c.autoinclude feature is disabled in the Plone fixture base
-        # layer.
+        import Products.ATContentTypes
+        self.loadZCML(package=Products.ATContentTypes)
         import plone.restapi
         import webcouturier.dropdownmenu
         self.loadZCML(package=plone.restapi)
         self.loadZCML(package=webcouturier.dropdownmenu)
         self.loadZCML(package=collective.restapi.navigationtree)
+        z2.installProduct(app, 'Products.Archetypes')
+        z2.installProduct(app, 'Products.ATContentTypes')
         z2.installProduct(app, 'collective.restapi.navigationtree')
 
     def setUpPloneSite(self, portal):
+        if portal.portal_setup.profileExists(
+                'Products.ATContentTypes:default'):
+            applyProfile(portal, 'Products.ATContentTypes:default')
         applyProfile(portal, 'collective.restapi.navigationtree:default')
         setRoles(portal, TEST_USER_ID, ['Manager'])
         login(portal, TEST_USER_NAME)
