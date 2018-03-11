@@ -28,9 +28,9 @@ before_script:
 script:
   - bin/code-analysis
   - bin/test
-  - bin/pylint --py3k --disable=no-absolute-import src/collective/cover || true
+  - bin/pylint --py3k --disable=no-absolute-import src/collective/restapi/navigationtree || true
 after_success:
-  - bin/createcoverage --output-dir=htmlcov -t "--layer=!Robot"
+  - bin/createcoverage --output-dir=htmlcov
   - bin/pip install coverage
   - bin/python -m coverage.pickle2json
   - pip install coveralls
