@@ -6,8 +6,14 @@
 collective.restapi.navigationtree
 =================================
 
+.. image:: http://img.shields.io/pypi/v/collective.restapi.navigationtree.svg
+      :target: https://pypi.python.org/pypi/collective.restapi.navigationtree
+
 .. image:: https://img.shields.io/travis/collective/collective.restapi.navigationtree/master.svg
        :target: http://travis-ci.org/collective/collective.restapi.navigationtree
+
+.. image:: https://img.shields.io/coveralls/collective/collective.restapi.navigationtree/master.svg
+       :target: https://coveralls.io/r/collective/collective.restapi.navigationtree
 
 
 This Plone plugin provides a REST endpoint to query the site's navigation tree.
