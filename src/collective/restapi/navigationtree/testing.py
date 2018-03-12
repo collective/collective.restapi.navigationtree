@@ -31,9 +31,9 @@ class CollectiveRestapiNavigationtreeDXLayer(PloneSandboxLayer):
         z2.installProduct(app, 'collective.restapi.navigationtree')
 
     def setUpPloneSite(self, portal):
-        applyProfile(portal, 'collective.restapi.navigationtree:default')
         setRoles(portal, TEST_USER_ID, ['Manager'])
         login(portal, TEST_USER_NAME)
+        applyProfile(portal, 'collective.restapi.navigationtree:default')
         workflowTool = api.portal.get_tool('portal_workflow')
         workflowTool.setDefaultChain('simple_publication_workflow')
         for i in range(2):
@@ -79,12 +79,12 @@ class CollectiveRestapiNavigationtreeATLayer(PloneSandboxLayer):
         z2.installProduct(app, 'collective.restapi.navigationtree')
 
     def setUpPloneSite(self, portal):
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+        login(portal, TEST_USER_NAME)
         if portal.portal_setup.profileExists(
                 'Products.ATContentTypes:default'):
             applyProfile(portal, 'Products.ATContentTypes:default')
         applyProfile(portal, 'collective.restapi.navigationtree:default')
-        setRoles(portal, TEST_USER_ID, ['Manager'])
-        login(portal, TEST_USER_NAME)
         workflowTool = api.portal.get_tool('portal_workflow')
         workflowTool.setDefaultChain('simple_publication_workflow')
         for i in range(2):
