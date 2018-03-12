@@ -31,7 +31,7 @@ class NavigationBase(object):
         setRoles(self.portal, TEST_USER_ID, ['Member'])
 
     def addSubFolders(self, container, base_id, level=0):
-        # add some subfolders to one of the folders
+        # recursively add some subfolders to one of the folders
         if level > 0:
             setRoles(self.portal, TEST_USER_ID, ['Manager'])
             for i in range(2):
@@ -62,6 +62,9 @@ class NavigationBase(object):
         setRoles(self.portal, TEST_USER_ID, ['Member'])
 
     def test_navigation(self):
+        # This test is almost identical to the corresponding one in
+        # plone.restapi.  It is provided to illustrate the differences
+        # between @navigation and @navigationtree
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.folder = api.content.create(
             container=self.portal, type=u'Folder',
@@ -80,42 +83,7 @@ class NavigationBase(object):
         self.maxDiff = None
         self.assertEqual(
             response.json(),
-            {
-                u'@id': u'http://localhost:55001/plone/folder/@navigationtree',
-                u'items': [
-                    {
-                        u'title': u'Home',
-                        u'description': u'',
-                        u'items': u'',
-                        u'@id': u'http://localhost:55001/plone',
-                    },
-                    {
-                        u'title': u'folder-0',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-0',
-                    },
-                    {
-                        u'title': u'folder-1',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-1',
-                    },
-                    {
-                        u'title': u'Some Folder',
-                        u'description': u'',
-                        u'@id': u'http://localhost:55001/plone/folder',
-                        u'items': [
-                            {
-                                u'title': u'A document',
-                                u'description': u'',
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder/doc1',
-                            },
-                        ],
-                    },
-                ],
-            },
+            RESPONSE_RESTAPI,
         )
 
     def test_no_subfolders_without_content(self):
@@ -126,29 +94,7 @@ class NavigationBase(object):
         self.maxDiff = None
         self.assertEqual(
             response.json(),
-            {
-                u'@id': u'http://localhost:55001/plone/@navigationtree',
-                u'items': [
-                    {
-                        u'title': u'Home',
-                        u'description': u'',
-                        u'items': u'',
-                        u'@id': u'http://localhost:55001/plone',
-                    },
-                    {
-                        u'title': u'folder-0',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-0',
-                    },
-                    {
-                        u'title': u'folder-1',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-1',
-                    },
-                ],
-            },
+            RESPONSE_LEVEL_0,
         )
 
     def test_dropdownmenus_available(self):
@@ -161,43 +107,7 @@ class NavigationBase(object):
         self.maxDiff = None
         self.assertEqual(
             response.json(),
-            {
-                u'@id': u'http://localhost:55001/plone/@navigationtree',
-                u'items': [
-                    {
-                        u'title': u'Home',
-                        u'description': u'',
-                        u'items': u'',
-                        u'@id': u'http://localhost:55001/plone',
-                    },
-                    {
-                        u'title': u'folder-0',
-                        u'description': u'',
-                        u'items': [
-                            {
-                                u'title': u'Folder0',
-                                u'description': u'',
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-0',  # noqa: E501
-                            },
-                            {
-                                u'title': u'Folder1',
-                                u'description': u'',
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-1',  # noqa: E501
-                            },
-
-                        ],
-                        u'@id': u'http://localhost:55001/plone/folder-0',
-                    },
-                    {
-                        u'title': u'folder-1',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-1',
-                    },
-                ],
-            },
+            RESPONSE_LEVEL_1,
         )
 
     def test_dropdownmenus_available_level_3_depth_1(self):
@@ -211,43 +121,7 @@ class NavigationBase(object):
         self.maxDiff = None
         self.assertEqual(
             response.json(),
-            {
-                u'@id': u'http://localhost:55001/plone/@navigationtree',
-                u'items': [
-                    {
-                        u'title': u'Home',
-                        u'description': u'',
-                        u'items': u'',
-                        u'@id': u'http://localhost:55001/plone',
-                    },
-                    {
-                        u'title': u'folder-0',
-                        u'description': u'',
-                        u'items': [
-                            {
-                                u'title': u'Folder0',
-                                u'description': u'',
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-0',  # noqa: E501
-                            },
-                            {
-                                u'title': u'Folder1',
-                                u'description': u'',
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-1',  # noqa: E501
-                            },
-
-                        ],
-                        u'@id': u'http://localhost:55001/plone/folder-0',
-                    },
-                    {
-                        u'title': u'folder-1',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-1',
-                    },
-                ],
-            },
+            RESPONSE_LEVEL_1,
         )
 
     def test_dropdownmenus_available_level_2(self):
@@ -260,58 +134,7 @@ class NavigationBase(object):
         self.maxDiff = None
         self.assertEqual(
             response.json(),
-            {
-                u'@id': u'http://localhost:55001/plone/@navigationtree',
-                u'items': [
-                    {
-                        u'title': u'Home',
-                        u'description': u'',
-                        u'items': u'',
-                        u'@id': u'http://localhost:55001/plone',
-                    },
-                    {
-                        u'title': u'folder-0',
-                        u'description': u'',
-                        u'items': [
-                            {
-                                u'title': u'Folder0',
-                                u'description': u'',
-                                u'items': [
-                                    {
-                                        u'title': u'Folder0',
-                                        u'description': u'',
-                                        u'@id':
-                                          u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0',  # noqa: E501
-                                    },
-                                    {
-                                        u'title': u'Folder1',
-                                        u'description': u'',
-                                        u'@id':
-                                          u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-1',  # noqa: E501
-                                    },
-
-                                ],
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-0',  # noqa: E501
-                            },
-                            {
-                                u'title': u'Folder1',
-                                u'description': u'',
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-1',  # noqa: E501
-                            },
-
-                        ],
-                        u'@id': u'http://localhost:55001/plone/folder-0',
-                    },
-                    {
-                        u'title': u'folder-1',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-1',
-                    },
-                ],
-            },
+            RESPONSE_LEVEL_2,
         )
 
     def test_dropdownmenus_available_level_3_depth_2(self):
@@ -325,58 +148,7 @@ class NavigationBase(object):
         self.maxDiff = None
         self.assertEqual(
             response.json(),
-            {
-                u'@id': u'http://localhost:55001/plone/@navigationtree',
-                u'items': [
-                    {
-                        u'title': u'Home',
-                        u'description': u'',
-                        u'items': u'',
-                        u'@id': u'http://localhost:55001/plone',
-                    },
-                    {
-                        u'title': u'folder-0',
-                        u'description': u'',
-                        u'items': [
-                            {
-                                u'title': u'Folder0',
-                                u'description': u'',
-                                u'items': [
-                                    {
-                                        u'title': u'Folder0',
-                                        u'description': u'',
-                                        u'@id':
-                                          u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0',  # noqa: E501
-                                    },
-                                    {
-                                        u'title': u'Folder1',
-                                        u'description': u'',
-                                        u'@id':
-                                          u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-1',  # noqa: E501
-                                    },
-
-                                ],
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-0',  # noqa: E501
-                            },
-                            {
-                                u'title': u'Folder1',
-                                u'description': u'',
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-1',  # noqa: E501
-                            },
-
-                        ],
-                        u'@id': u'http://localhost:55001/plone/folder-0',
-                    },
-                    {
-                        u'title': u'folder-1',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-1',
-                    },
-                ],
-            },
+            RESPONSE_LEVEL_2,
         )
 
     def test_dropdownmenus_available_level_3(self):
@@ -389,70 +161,7 @@ class NavigationBase(object):
         self.maxDiff = None
         self.assertEqual(
             response.json(),
-            {
-                u'@id': u'http://localhost:55001/plone/@navigationtree',
-                u'items': [
-                    {
-                        u'title': u'Home',
-                        u'description': u'',
-                        u'items': u'',
-                        u'@id': u'http://localhost:55001/plone',
-                    },
-                    {
-                        u'title': u'folder-0',
-                        u'description': u'',
-                        u'items': [
-                            {
-                                u'title': u'Folder0',
-                                u'description': u'',
-                                u'items': [
-                                    {
-                                        u'title': u'Folder0',
-                                        u'description': u'',
-                                        u'items': [
-                                            {
-                                                u'title': u'Folder0',
-                                                u'description': u'',
-                                                u'@id':
-                                                  u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0/sub-sub-sub-0',  # noqa: E501
-                                            },
-                                            {
-                                                u'title': u'Folder1',
-                                                u'description': u'',
-                                                u'@id':
-                                                  u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0/sub-sub-sub-1',  # noqa: E501
-                                            },
-                                        ],
-                                        u'@id':
-                                          u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0',  # noqa: E501
-                                    },
-                                    {
-                                        u'title': u'Folder1',
-                                        u'description': u'',
-                                        u'@id':
-                                          u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-1',  # noqa: E501
-                                    },
-                                ],
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-0',  # noqa: E501
-                            },
-                            {
-                                u'title': u'Folder1',
-                                u'description': u'',
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-1',  # noqa: E501
-                            },
-                        ],
-                        u'@id': u'http://localhost:55001/plone/folder-0',
-                    },
-                    {
-                        u'title': u'folder-1',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-1',
-                    },
-                ],
-            },
+            RESPONSE_LEVEL_3,
         )
 
     def test_dropdownmenus_available_level_5(self):
@@ -467,70 +176,7 @@ class NavigationBase(object):
         self.maxDiff = None
         self.assertEqual(
             response.json(),
-            {
-                u'@id': u'http://localhost:55001/plone/@navigationtree',
-                u'items': [
-                    {
-                        u'title': u'Home',
-                        u'description': u'',
-                        u'items': u'',
-                        u'@id': u'http://localhost:55001/plone',
-                    },
-                    {
-                        u'title': u'folder-0',
-                        u'description': u'',
-                        u'items': [
-                            {
-                                u'title': u'Folder0',
-                                u'description': u'',
-                                u'items': [
-                                    {
-                                        u'title': u'Folder0',
-                                        u'description': u'',
-                                        u'items': [
-                                            {
-                                                u'title': u'Folder0',
-                                                u'description': u'',
-                                                u'@id':
-                                                  u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0/sub-sub-sub-0',  # noqa: E501
-                                            },
-                                            {
-                                                u'title': u'Folder1',
-                                                u'description': u'',
-                                                u'@id':
-                                                  u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0/sub-sub-sub-1',  # noqa: E501
-                                            },
-                                        ],
-                                        u'@id':
-                                          u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0',  # noqa: E501
-                                    },
-                                    {
-                                        u'title': u'Folder1',
-                                        u'description': u'',
-                                        u'@id':
-                                          u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-1',  # noqa: E501
-                                    },
-                                ],
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-0',  # noqa: E501
-                            },
-                            {
-                                u'title': u'Folder1',
-                                u'description': u'',
-                                u'@id':
-                                  u'http://localhost:55001/plone/folder-0/sub-1',  # noqa: E501
-                            },
-                        ],
-                        u'@id': u'http://localhost:55001/plone/folder-0',
-                    },
-                    {
-                        u'title': u'folder-1',
-                        u'description': u'',
-                        u'items': [],
-                        u'@id': u'http://localhost:55001/plone/folder-1',
-                    },
-                ],
-            },
+            RESPONSE_LEVEL_3,
         )
 
 
@@ -542,3 +188,218 @@ class TestDXServicesNavigation(NavigationBase, unittest.TestCase):
 class TestATServicesNavigation(NavigationBase, unittest.TestCase):
 
     layer = CRN_AT_FUNCTIONAL_TESTING
+
+
+RESPONSE_RESTAPI = {
+    u'@id': u'http://localhost:55001/plone/folder/@navigationtree',
+    u'items': [
+        {
+            u'title': u'Home',
+            u'description': u'',
+            u'items': u'',
+            u'@id': u'http://localhost:55001/plone',
+        },
+        {
+            u'title': u'folder-0',
+            u'description': u'',
+            u'items': [],
+            u'@id': u'http://localhost:55001/plone/folder-0',
+        },
+        {
+            u'title': u'folder-1',
+            u'description': u'',
+            u'items': [],
+            u'@id': u'http://localhost:55001/plone/folder-1',
+        },
+        {
+            u'title': u'Some Folder',
+            u'description': u'',
+            u'@id': u'http://localhost:55001/plone/folder',
+            u'items': [
+                {
+                    u'title': u'A document',
+                    u'description': u'',
+                    u'@id':
+                      u'http://localhost:55001/plone/folder/doc1',
+                },
+            ],
+        },
+    ],
+}
+
+RESPONSE_LEVEL_0 = {
+    u'@id': u'http://localhost:55001/plone/@navigationtree',
+    u'items': [
+        {
+            u'title': u'Home',
+            u'description': u'',
+            u'items': u'',
+            u'@id': u'http://localhost:55001/plone',
+        },
+        {
+            u'title': u'folder-0',
+            u'description': u'',
+            u'items': [],
+            u'@id': u'http://localhost:55001/plone/folder-0',
+        },
+        {
+            u'title': u'folder-1',
+            u'description': u'',
+            u'items': [],
+            u'@id': u'http://localhost:55001/plone/folder-1',
+        },
+    ],
+}
+
+RESPONSE_LEVEL_1 = {
+    u'@id': u'http://localhost:55001/plone/@navigationtree',
+    u'items': [
+        {
+            u'title': u'Home',
+            u'description': u'',
+            u'items': u'',
+            u'@id': u'http://localhost:55001/plone',
+        },
+        {
+            u'title': u'folder-0',
+            u'description': u'',
+            u'items': [
+                {
+                    u'title': u'Folder0',
+                    u'description': u'',
+                    u'@id':
+                      u'http://localhost:55001/plone/folder-0/sub-0',  # noqa: E501
+                },
+                {
+                    u'title': u'Folder1',
+                    u'description': u'',
+                    u'@id':
+                      u'http://localhost:55001/plone/folder-0/sub-1',  # noqa: E501
+                },
+            ],
+            u'@id': u'http://localhost:55001/plone/folder-0',
+        },
+        {
+            u'title': u'folder-1',
+            u'description': u'',
+            u'items': [],
+            u'@id': u'http://localhost:55001/plone/folder-1',
+        },
+    ],
+}
+
+RESPONSE_LEVEL_2 = {
+    u'@id': u'http://localhost:55001/plone/@navigationtree',
+    u'items': [
+        {
+            u'title': u'Home',
+            u'description': u'',
+            u'items': u'',
+            u'@id': u'http://localhost:55001/plone',
+        },
+        {
+            u'title': u'folder-0',
+            u'description': u'',
+            u'items': [
+                {
+                    u'title': u'Folder0',
+                    u'description': u'',
+                    u'items': [
+                        {
+                            u'title': u'Folder0',
+                            u'description': u'',
+                            u'@id':
+                              u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0',  # noqa: E501
+                        },
+                        {
+                            u'title': u'Folder1',
+                            u'description': u'',
+                            u'@id':
+                              u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-1',  # noqa: E501
+                        },
+                    ],
+                    u'@id':
+                      u'http://localhost:55001/plone/folder-0/sub-0',  # noqa: E501
+                },
+                {
+                    u'title': u'Folder1',
+                    u'description': u'',
+                    u'@id':
+                      u'http://localhost:55001/plone/folder-0/sub-1',  # noqa: E501
+                },
+            ],
+            u'@id': u'http://localhost:55001/plone/folder-0',
+        },
+        {
+            u'title': u'folder-1',
+            u'description': u'',
+            u'items': [],
+            u'@id': u'http://localhost:55001/plone/folder-1',
+        },
+    ],
+}
+
+RESPONSE_LEVEL_3 = {
+    u'@id': u'http://localhost:55001/plone/@navigationtree',
+    u'items': [
+        {
+            u'title': u'Home',
+            u'description': u'',
+            u'items': u'',
+            u'@id': u'http://localhost:55001/plone',
+        },
+        {
+            u'title': u'folder-0',
+            u'description': u'',
+            u'items': [
+                {
+                    u'title': u'Folder0',
+                    u'description': u'',
+                    u'items': [
+                        {
+                            u'title': u'Folder0',
+                            u'description': u'',
+                            u'items': [
+                                {
+                                    u'title': u'Folder0',
+                                    u'description': u'',
+                                    u'@id':
+                                      u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0/sub-sub-sub-0',  # noqa: E501
+                                },
+                                {
+                                    u'title': u'Folder1',
+                                    u'description': u'',
+                                    u'@id':
+                                      u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0/sub-sub-sub-1',  # noqa: E501
+                                },
+                            ],
+                            u'@id':
+                              u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-0',  # noqa: E501
+                        },
+                        {
+                            u'title': u'Folder1',
+                            u'description': u'',
+                            u'@id':
+                              u'http://localhost:55001/plone/folder-0/sub-0/sub-sub-1',  # noqa: E501
+                        },
+                    ],
+                    u'@id':
+                      u'http://localhost:55001/plone/folder-0/sub-0',  # noqa: E501
+                },
+                {
+                    u'title': u'Folder1',
+                    u'description': u'',
+                    u'@id':
+                      u'http://localhost:55001/plone/folder-0/sub-1',  # noqa: E501
+                },
+            ],
+            u'@id': u'http://localhost:55001/plone/folder-0',
+        },
+        {
+            u'title': u'folder-1',
+            u'description': u'',
+            u'items': [],
+            u'@id': u'http://localhost:55001/plone/folder-1',
+        },
+    ],
+}

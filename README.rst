@@ -17,23 +17,25 @@ collective.restapi.navigationtree
 
 
 This Plone plugin provides a REST endpoint to query the site's navigation tree.
-The endpoint name is `@navigationtree`,
-and can be considered an extension to `plone.restapi`'s `@navigation` endpoint, 
+The endpoint name is ``@navigationtree``,
+and can be considered an extension to ``plone.restapi``'s ``@navigation`` endpoint, 
 since the latter only returns the top level navigation menu items.
-`collective.restapi.navigationtree` depends on the `webcouturier.dropdownmenu` plugin to build the navigation tree,
-and honors the same configuration settings as `webcouturier.dropdownmenu`.
-Thus, the maximum depth of the tree can be set in the `webcouturier.dropdownmenu` configlet.
+``collective.restapi.navigationtree`` depends on the ``webcouturier.dropdownmenu`` plugin to build the navigation tree,
+and honors the same configuration settings as ``webcouturier.dropdownmenu``.
+Thus, the maximum depth of the tree can be set in the ``webcouturier.dropdownmenu`` configlet.
+
+Tested on Plone 4.3, 5.0 and 5.1 with Archetypes and Dexterity.
 
 
 Features
 --------
 
-- Simply `GET @navigationtree`
-- Extends the `@navigation` endpoint of `plone.restapi` by building a full navigation tree of the site, instead of limiting itself to just the top level navigation menu.
-- Depends on `webcouturier.dropdownmenu`, thus is ideal for sites that already use this plugin for their navigation menu.
+- Simply ``GET @navigationtree``
+- Extends the ``@navigation`` endpoint of ``plone.restapi`` by building a full navigation tree of the site, instead of limiting itself to just the top level navigation menu.
+- Depends on ``webcouturier.dropdownmenu``, thus is ideal for sites that already use this plugin for their navigation menu.
 - Honors all the configuration settings in Plone's _Navigation_ control panel.
-- Honors all the configuration settings in `@@dropdown-controlpanel`.
-- In particular, you can set the depth of the navigation tree in `webcouturier.dropdownmenu`'s configlet.
+- Honors all the configuration settings in ``@@dropdown-controlpanel``.
+- In particular, you can set the depth of the navigation tree in ``webcouturier.dropdownmenu``'s configlet.
 
 
 Examples
@@ -45,7 +47,7 @@ Getting the navigation tree::
     Accept: application/json
     Authorization: Basic YWRtaW46c2VjcmV0
 
-Authorization is optional.
+(Authorization is optional.)
 
 Example response::
 
@@ -85,20 +87,6 @@ Example response::
         ]
     }
 
-Documentation
--------------
-
-Full documentation for end users can be found in the "docs" folder, and is also available online at http://docs.plone.org/foo/bar
-
-
-Translations
-------------
-
-This product has been translated into
-
-- Klingon (thanks, K'Plai)
-
-
 Installation
 ------------
 
@@ -112,7 +100,9 @@ Install collective.restapi.navigationtree by adding it to your buildout::
         collective.restapi.navigationtree
 
 
-and then running ``bin/buildout``
+and then running ``bin/buildout``.  
+This will automatically install webcouturier.dropdownmenu and plone.restapi,
+so you should pin the versions of these add-ons according to the version of Plone you are running.
 
 
 Contribute
