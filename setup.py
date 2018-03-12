@@ -15,7 +15,7 @@ long_description = '\n\n'.join([
 setup(
     name='collective.restapi.navigationtree',
     version='1.0a1',
-    description='An add-on for Plone',
+    description='Provides a REST endpoint to query the site\'s navigation tree',
     long_description=long_description,
     # Get more from https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
