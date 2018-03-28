@@ -6,11 +6,33 @@ from plone.app.layout.navigation.root import getNavigationRoot
 from plone.app.portlets.portlets.navigation import Assignment
 from plone.restapi.interfaces import IExpandableElement
 from plone.restapi.services import Service
-from webcouturier.dropdownmenu.browser.dropdown import DropdownQueryBuilder
+from Products.CMFPlone.browser.navtree import NavtreeQueryBuilder
+from webcouturier.dropdownmenu.browser.interfaces import IDropdownConfiguration
 from zope.component import adapter
 from zope.component import getMultiAdapter
 from zope.interface import implementer
 from zope.interface import Interface
+
+
+class DropdownQueryBuilder(NavtreeQueryBuilder):
+    """Build a folder tree query suitable for a dropdownmenu
+    """
+
+    def __init__(self, context):
+        NavtreeQueryBuilder.__init__(self, context)
+        try:
+            # webcouturier.dropdownmenu version 3.x
+            dropdown_depth = api.portal.get_registry_record('dropdown_depth',
+                                                            interface=IDropdownConfiguration)  # noqa: E501
+        except KeyError:
+            # webcouturier.dropdownmenu version 2.x
+            propertiesTool = api.portal.get_tool(u'portal_properties')
+            dmprops = propertiesTool[u'dropdown_properties']
+            if dmprops.hasProperty(u'dropdown_depth'):
+                dropdown_depth = dmprops.getProperty('dropdown_depth', 3)
+        self.query['path'] = {'query': '/'.join(context.getPhysicalPath()),
+                              'navtree_start': 1,
+                              'depth': dropdown_depth}
 
 
 @implementer(IExpandableElement)
